@@ -6,7 +6,7 @@ enum List<T> {
 }
 
 impl<T> List<T> {
-    fn nil() -> List<T> {
+    fn empty() -> List<T> {
         Nil
     }
 
@@ -29,7 +29,7 @@ mod tests {
 
     #[test]
     fn is_empty() {
-        assert!(List::<i32>::nil().is_empty());
+        assert!(List::<i32>::empty().is_empty());
         assert!(!List::one(0).is_empty());
     }
 }
