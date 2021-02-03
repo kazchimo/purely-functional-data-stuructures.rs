@@ -1,21 +1,21 @@
 use crate::list::List::{Nil, Cons};
 
 #[derive(PartialEq)]
-enum List<T> {
+enum List<'a, T> {
     Nil,
-    Cons(T, Box<List<T>>)
+    Cons(&'a T, Box<&'a List<'a, T>>),
 }
 
-impl<T> List<T> {
-    fn empty() -> List<T> {
+impl<T> List<'_, T> {
+    fn empty() -> List<'static, T> {
         Nil
     }
 
-    fn one(a: T) -> List<T> {
-        Cons(a, Box::new(Nil))
+    fn one(a: &T) -> List<T> {
+        Cons(a, Box::new(&Nil))
     }
 
-    fn cons(x: T, s: List<T>) -> List<T> {
+    fn cons<'a>(x: &'a T, s: &'a List<T>) -> List<'a, T> {
         Cons(x, Box::new(s))
     }
 
@@ -35,13 +35,13 @@ mod tests {
     #[test]
     fn is_empty() {
         assert!(List::<i32>::empty().is_empty());
-        assert!(!List::one(0).is_empty());
+        assert!(!List::one(&0).is_empty());
     }
 
     #[test]
     fn cons() {
-        assert!(List::cons(1, Nil) == Cons(1, Box::new(Nil)));
-        assert!(List::cons(1, List::cons(2, Nil)) == Cons(1, Box::new(Cons(2, Box::new(Nil)))))
+        assert!(List::cons(&1, &Nil) == Cons(&1, Box::new(&Nil)));
+        assert!(List::cons(&1, &List::cons(&2, &Nil)) == Cons(&1, Box::new(&Cons(&2, Box::new(&Nil)))))
     }
 }
 
