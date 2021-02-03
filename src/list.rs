@@ -1,6 +1,6 @@
 use crate::list::List::{Nil, Cons};
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 enum List<'a, T> {
     Nil,
     Cons(&'a T, Box<&'a List<'a, T>>),
@@ -32,6 +32,13 @@ impl<T> List<'_, T> {
             Cons(x, _) => x
         }
     }
+
+    fn tail(&self) -> &List<'_, T> {
+        match self {
+            Nil => panic!("Empty List"),
+            Cons(_, s) => s
+        }
+    }
 }
 
 #[cfg(test)]
@@ -47,8 +54,8 @@ mod tests {
 
     #[test]
     fn cons() {
-        assert!(List::cons(&1, &Nil) == Cons(&1, Box::new(&Nil)));
-        assert!(List::cons(&1, &List::cons(&2, &Nil)) == Cons(&1, Box::new(&Cons(&2, Box::new(&Nil)))))
+        assert_eq!(List::cons(&1, &Nil), Cons(&1, Box::new(&Nil)));
+        assert_eq!(List::cons(&1, &List::cons(&2, &Nil)), Cons(&1, Box::new(&Cons(&2, Box::new(&Nil)))))
     }
 
     #[test]
@@ -57,8 +64,21 @@ mod tests {
         List::<i32>::empty().head();
     }
 
+    #[test]
     fn head() {
         assert_eq!(List::one(&1).head(), &1)
+    }
+
+    #[test]
+    #[should_panic]
+    fn fail_tail() {
+        List::<i32>::empty().tail();
+    }
+
+    #[test]
+    fn tail() {
+        assert_eq!(List::one(&1).tail(), &Nil);
+        assert_eq!(List::cons(&1, &List::one(&2)).tail(), &List::one(&2))
     }
 }
 
