@@ -25,6 +25,13 @@ impl<T> List<'_, T> {
             Cons(_, _) => false
         }
     }
+
+    fn head(&self) -> &T {
+        match self {
+            Nil => panic!("Empty List"),
+            Cons(x, _) => x
+        }
+    }
 }
 
 #[cfg(test)]
@@ -42,6 +49,16 @@ mod tests {
     fn cons() {
         assert!(List::cons(&1, &Nil) == Cons(&1, Box::new(&Nil)));
         assert!(List::cons(&1, &List::cons(&2, &Nil)) == Cons(&1, Box::new(&Cons(&2, Box::new(&Nil)))))
+    }
+
+    #[test]
+    #[should_panic]
+    fn fail_head() {
+        List::<i32>::empty().head();
+    }
+
+    fn head() {
+        assert_eq!(List::one(&1).head(), &1)
     }
 }
 
